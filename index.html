@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CBT Algonova — Data dan Diagram</title>
+<style>
+:root {
+  --purple:#6E2C83; --purple-dark:#55206B; --lav:#F3EAF8; --lav-line:#D8C4E2;
+  --sky:#EAF6FF; --mint:#EAF9F0; --cream:#FFF4D6; --ink:#222; --gray:#68707A;
+  --green:#247A52; --red:#B42318; --orange:#FDE9D2; --white:#fff;
+  --shadow:0 10px 30px rgba(73,42,90,.10);
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(135deg,#fbf9fd 0%,#f5fbff 50%,#fffaf0 100%);color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif;min-height:100vh}
+header{background:rgba(255,255,255,.95);border-bottom:1px solid var(--lav-line);position:sticky;top:0;z-index:20;backdrop-filter:blur(8px)}
+.topbar{max-width:1180px;margin:auto;padding:14px 18px;display:flex;align-items:center;gap:16px;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--purple);color:white;font-weight:800;font-size:22px}
+.brand h1{font-size:18px;margin:0;color:var(--purple-dark)} .brand small{color:var(--gray)}
+.stats{display:flex;gap:10px;flex-wrap:wrap}
+.pill{background:var(--lav);color:var(--purple-dark);padding:8px 11px;border-radius:999px;font-size:13px;font-weight:700}
+.progress-wrap{height:5px;background:#eee}.progress{height:5px;background:var(--purple);width:0%;transition:.25s}
+main{max-width:1180px;margin:22px auto;padding:0 18px 36px;display:grid;grid-template-columns:260px 1fr;gap:20px}
+.side,.card{background:rgba(255,255,255,.96);border:1px solid var(--lav-line);border-radius:20px;box-shadow:var(--shadow)}
+.side{padding:16px;align-self:start;position:sticky;top:90px}
+.side h3{margin:0 0 10px;color:var(--purple-dark);font-size:15px}
+.name-input{width:100%;border:1px solid var(--lav-line);border-radius:10px;padding:10px 11px;font-size:14px;outline:none}
+.name-input:focus{border-color:var(--purple)}
+.legend{display:flex;gap:10px;font-size:11px;color:var(--gray);margin:12px 0;flex-wrap:wrap}
+.dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+.navgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.qnav{height:38px;border:1px solid var(--lav-line);background:white;border-radius:9px;cursor:pointer;font-weight:700;color:var(--purple-dark)}
+.qnav.answered{background:var(--mint);border-color:#b8e3c8;color:var(--green)}
+.qnav.current{outline:3px solid rgba(110,44,131,.18);border-color:var(--purple);background:var(--lav)}
+.qnav.correct{background:#eaf9f0;border-color:#78c799;color:#17623f}
+.qnav.wrong{background:#fff0ee;border-color:#f1a69d;color:#9f2017}
+.card{padding:26px;min-height:590px}
+.meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px}
+.tag{padding:6px 9px;border-radius:999px;background:var(--sky);font-size:12px;font-weight:700;color:#31546b}
+.tag.level{background:var(--lav);color:var(--purple-dark)} .tag.source{background:var(--cream);color:#735a17}
+.qtitle{font-size:21px;line-height:1.55;margin:5px 0 18px;color:#27222b}
+.options{display:grid;gap:11px}
+.option{border:1.5px solid #e5dce9;border-radius:14px;padding:14px 15px;cursor:pointer;display:flex;gap:12px;align-items:flex-start;transition:.18s;background:white}
+.option:hover{border-color:#b991c7;transform:translateY(-1px)}
+.option.selected{border-color:var(--purple);background:var(--lav)}
+.option.correct{border-color:#63b383;background:#effaf3}
+.option.wrong{border-color:#e98c80;background:#fff3f1}
+.letter{min-width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#f1eaf4;color:var(--purple-dark);font-weight:800}
+.option.selected .letter{background:var(--purple);color:white}
+.hintbox{display:none;margin-top:16px;background:var(--cream);border:1px solid #ead28e;border-radius:12px;padding:13px 14px;line-height:1.5}
+.feedback{display:none;margin-top:16px;border-radius:12px;padding:13px 14px;line-height:1.5}
+.feedback.ok{background:#eaf9f0;border:1px solid #b7e1c6}.feedback.no{background:#fff1ef;border:1px solid #f0b0a7}
+.actions{display:flex;gap:10px;justify-content:space-between;align-items:center;margin-top:22px;flex-wrap:wrap}
+.left-actions,.right-actions{display:flex;gap:9px;flex-wrap:wrap}
+button.action{border:0;border-radius:11px;padding:11px 15px;font-weight:800;cursor:pointer;font-size:14px}
+.secondary{background:#f2edf4;color:var(--purple-dark)}.hintbtn{background:var(--cream);color:#6f5715}
+.primary{background:var(--purple);color:white}.finish{background:var(--green);color:white}
+button:disabled{opacity:.45;cursor:not-allowed}
+.footer-note{margin-top:18px;font-size:12px;color:var(--gray);text-align:center}
+.overlay{position:fixed;inset:0;background:rgba(31,20,36,.58);display:none;place-items:center;padding:20px;z-index:50}
+.modal{background:white;border-radius:22px;max-width:520px;width:100%;padding:28px;box-shadow:0 25px 70px rgba(0,0,0,.25);text-align:center}
+.score-ring{width:128px;height:128px;margin:12px auto 18px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--purple) 0deg,#ece5ef 0deg);position:relative}
+.score-ring:after{content:"";position:absolute;width:98px;height:98px;border-radius:50%;background:white}
+.score-text{position:relative;z-index:2;font-size:28px;font-weight:900;color:var(--purple-dark)}
+.modal h2{color:var(--purple-dark);margin:4px 0}.modal p{color:var(--gray);line-height:1.5}
+.modal-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+.notice{font-size:12px;color:var(--gray);margin-top:8px}
+@media(max-width:850px){main{grid-template-columns:1fr}.side{position:static;order:2}.card{order:1;min-height:auto}.stats .pill:nth-child(1){display:none}}
+@media(max-width:560px){.topbar{align-items:flex-start}.brand h1{font-size:16px}.card{padding:19px}.qtitle{font-size:18px}.navgrid{grid-template-columns:repeat(5,1fr)}.qnav{height:34px;font-size:12px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">A</div>
+      <div><h1>CBT ALGONOVA</h1><small>Data & Diagram · 20 Soal<br>Tutor: Ramanda Ditra Kristian</small></div>
+    </div>
+    <div class="stats">
+      <div class="pill" id="timer">Waktu 00:00:00</div>
+      <div class="pill" id="answeredPill">Terjawab 0/20</div>
+    </div>
+  </div>
+  <div class="progress-wrap"><div class="progress" id="progress"></div></div>
+</header>
+
+<main>
+  <aside class="side">
+    <h3>Identitas CBT</h3>
+    <div style="font-size:13px;line-height:1.55;color:#55206B;margin-bottom:12px">
+      <strong>Tutor:</strong> Ramanda Ditra Kristian<br>
+      <strong>Program:</strong> Math Tutoring<br>
+      <strong>Kelas:</strong> Cambridge IGCSE / SMP–Lower Secondary<br>
+      <strong>Mata Pelajaran:</strong> Matematika<br>
+      <strong>Materi:</strong> Data dan Diagram
+    </div>
+    <h3>Identitas Student</h3>
+    <input class="name-input" id="studentName" placeholder="Nama student" value="Colin">
+    <div class="legend">
+      <span><i class="dot" style="background:#EAF9F0;border:1px solid #b8e3c8"></i>Terjawab</span>
+      <span><i class="dot" style="background:#F3EAF8;border:1px solid #6E2C83"></i>Aktif</span>
+    </div>
+    <h3>Navigasi Soal</h3>
+    <div class="navgrid" id="navgrid"></div>
+    <div class="footer-note">Klik nomor untuk berpindah soal.<br>Clue dapat dibuka tanpa mengurangi skor.</div>
+  </aside>
+
+  <section class="card">
+    <div class="meta">
+      <span class="tag level" id="levelTag"></span>
+      <span class="tag" id="topicTag"></span>
+      <span class="tag source" id="sourceTag"></span>
+    </div>
+    <div class="qtitle" id="questionText"></div>
+    <div class="options" id="options"></div>
+    <div class="hintbox" id="hintbox"></div>
+    <div class="feedback" id="feedback"></div>
+    <div class="actions">
+      <div class="left-actions">
+        <button class="action secondary" id="prevBtn">← Sebelumnya</button>
+        <button class="action hintbtn" id="hintBtn">💡 Lihat Clue</button>
+      </div>
+      <div class="right-actions">
+        <button class="action primary" id="nextBtn">Berikutnya →</button>
+        <button class="action finish" id="finishBtn">Selesai & Nilai</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="score-ring" id="scoreRing"><div class="score-text" id="scoreText">0</div></div>
+    <h2 id="resultTitle">Hasil CBT</h2>
+    <p id="resultDesc"></p>
+    <div class="notice">Setelah menutup hasil, pembahasan setiap soal akan terlihat saat Anda menavigasi soal.</div>
+    <div class="modal-actions">
+      <button class="action secondary" id="closeResult">Review Jawaban</button>
+      <button class="action primary" id="resetBtn">Ulangi CBT</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [{"id": 1, "source": 3, "level": "Medium", "topic": "Jenis Data", "q": "Manakah klasifikasi data yang seluruhnya benar?", "opts": [["A", "Warna tas = kuantitatif diskret; tinggi badan = kualitatif; jumlah saudara = kontinu"], ["B", "Warna tas dan jenis transportasi = kualitatif; jumlah saudara dan banyak buku = kuantitatif diskret; tinggi badan dan waktu tempuh = kuantitatif kontinu"], ["C", "Semua data yang berupa angka adalah kuantitatif kontinu"], ["D", "Jumlah saudara dan banyak buku = kontinu; tinggi badan dan waktu tempuh = diskret"]], "ans": "B", "hint": "Bedakan data berupa kategori, hasil hitungan, dan hasil pengukuran.", "exp": "Warna tas dan jenis transportasi adalah kualitatif. Jumlah saudara kandung dan banyak buku adalah kuantitatif diskret karena berupa hitungan. Tinggi badan dan waktu tempuh adalah kuantitatif kontinu karena dapat bernilai desimal."}, {"id": 2, "source": 11, "level": "Medium", "topic": "Tabel Frekuensi", "q": "Data banyak soal benar dari 20 siswa adalah 12,15,14,12,16,18,15,14,12,17,16,15,14,18,12,13,15,17,16,14. Modus data tersebut adalah …", "opts": [["A", "12 dan 14"], ["B", "14 dan 15"], ["C", "12, 14, dan 15"], ["D", "15 saja"]], "ans": "C", "hint": "Hitung berapa kali setiap nilai muncul.", "exp": "Nilai 12 muncul 4 kali, 13 satu kali, 14 empat kali, 15 empat kali, 16 tiga kali, 17 dua kali, dan 18 dua kali. Frekuensi terbesar adalah 4, sehingga modusnya 12, 14, dan 15."}, {"id": 3, "source": 21, "level": "Medium", "topic": "Diagram Batang Dasar", "q": "Penjualan buku selama empat hari adalah: Senin 24, Selasa 36, Rabu 30, Kamis 42. Selisih penjualan tertinggi dan terendah serta rata-rata per hari berturut-turut adalah …", "opts": [["A", "18 dan 33"], ["B", "12 dan 33"], ["C", "18 dan 30"], ["D", "24 dan 36"]], "ans": "A", "hint": "Cari maksimum dan minimum, lalu hitung jumlah seluruh data dibagi 4.", "exp": "Tertinggi 42 dan terendah 24, sehingga selisihnya 18. Rata-rata = (24+36+30+42)/4 = 132/4 = 33."}, {"id": 4, "source": 33, "level": "Medium", "topic": "Sudut Diagram Lingkaran", "q": "Dari 120 siswa, 30 memilih sains, 45 olahraga, 15 seni, dan sisanya bahasa. Sudut sektor Sains, Olahraga, Seni, dan Bahasa berturut-turut adalah …", "opts": [["A", "90°, 120°, 60°, 90°"], ["B", "60°, 135°, 45°, 120°"], ["C", "90°, 135°, 60°, 75°"], ["D", "90°, 135°, 45°, 90°"]], "ans": "D", "hint": "Gunakan sudut sektor = frekuensi/120 × 360°.", "exp": "Sains = 30/120×360°=90°. Olahraga=135°. Seni=45°. Sisa bahasa 30 siswa sehingga sudutnya 90°."}, {"id": 5, "source": 45, "level": "Medium", "topic": "Piktogram", "q": "Pada piktogram, satu ikon buku mewakili 6 buku. Perpustakaan A memiliki 7,5 ikon dan perpustakaan B memiliki 11 ikon. Selisih banyak buku keduanya adalah …", "opts": [["A", "18 buku"], ["B", "21 buku"], ["C", "24 buku"], ["D", "27 buku"]], "ans": "B", "hint": "Ubah jumlah ikon masing-masing menjadi banyak buku terlebih dahulu.", "exp": "A memiliki 7,5×6=45 buku dan B memiliki 11×6=66 buku. Selisihnya 66−45=21 buku."}, {"id": 6, "source": 2, "level": "Medium–High", "topic": "Populasi dan Sampel", "q": "Sebuah sekolah memiliki 840 siswa. Peneliti memilih 70 siswa dari kelas 7, 70 dari kelas 8, dan 70 dari kelas 9 secara acak. Pernyataan yang paling tepat adalah …", "opts": [["A", "Populasinya 210 siswa dan sampelnya 840 siswa"], ["B", "Ukuran sampelnya 70 siswa karena setiap jenjang diambil 70 siswa"], ["C", "Populasinya 840 siswa, sampelnya 210 siswa, dan pengambilan dari tiap jenjang lebih representatif daripada mengambil 210 siswa hanya dari kelas 8"], ["D", "Mengambil seluruh sampel hanya dari kelas 8 selalu lebih baik karena jumlahnya sama"]], "ans": "C", "hint": "Populasi adalah seluruh kelompok yang ingin diteliti; sampel adalah bagian yang benar-benar diamati.", "exp": "Populasi adalah seluruh 840 siswa. Sampel berjumlah 70+70+70=210 siswa. Mengambil dari tiap jenjang lebih representatif karena kebiasaan membaca dapat berbeda antarkelas."}, {"id": 7, "source": 12, "level": "Medium–High", "topic": "Frekuensi Relatif", "q": "Dari 80 siswa, 12 berjalan kaki, 18 naik sepeda, 35 naik motor, dan 15 naik bus. Persentase pengguna motor adalah …", "opts": [["A", "43,75%"], ["B", "35%"], ["C", "45%"], ["D", "56,25%"]], "ans": "A", "hint": "Frekuensi relatif = frekuensi/total × 100%.", "exp": "Persentase pengguna motor = 35/80×100% = 43,75%."}, {"id": 8, "source": 26, "level": "Medium–High", "topic": "Diagram Garis", "q": "Suhu pada pukul 06.00, 09.00, 12.00, 15.00, dan 18.00 berturut-turut adalah 24°C, 28°C, 33°C, 31°C, dan 27°C. Kenaikan suhu terbesar terjadi pada …", "opts": [["A", "06.00–09.00 sebesar 3°C"], ["B", "12.00–15.00 sebesar 2°C"], ["C", "15.00–18.00 sebesar 4°C"], ["D", "09.00–12.00 sebesar 5°C"]], "ans": "D", "hint": "Bandingkan perubahan suhu pada setiap dua waktu yang berurutan.", "exp": "Perubahannya: +4, +5, −2, dan −4. Kenaikan terbesar adalah 5°C antara pukul 09.00 dan 12.00."}, {"id": 9, "source": 34, "level": "Medium–High", "topic": "Frekuensi dari Sudut", "q": "Pada diagram lingkaran 200 responden, sektor A=72°, B=108°, C=54°, dan D adalah sisanya. Frekuensi sektor D adalah …", "opts": [["A", "60"], ["B", "70"], ["C", "80"], ["D", "90"]], "ans": "B", "hint": "Cari dahulu sudut sektor D, lalu ubah sudut menjadi frekuensi.", "exp": "Sudut D = 360°−72°−108°−54°=126°. Frekuensi D = 126/360×200 = 70."}, {"id": 10, "source": 42, "level": "Medium–High", "topic": "Memilih Diagram yang Tepat", "q": "Jika tujuan penyajian data adalah menunjukkan komposisi pengeluaran bulanan sebagai bagian dari keseluruhan, diagram yang paling tepat adalah …", "opts": [["A", "Diagram garis"], ["B", "Histogram"], ["C", "Diagram lingkaran"], ["D", "Diagram pencar"]], "ans": "C", "hint": "Pilih diagram yang menonjolkan proporsi setiap kategori terhadap total.", "exp": "Diagram lingkaran paling sesuai untuk memperlihatkan bagian atau proporsi setiap kategori terhadap keseluruhan pengeluaran."}, {"id": 11, "source": 5, "level": "High", "topic": "Bias Sampel", "q": "Survei pilihan makanan kantin dilakukan hanya kepada siswa yang sedang membeli makanan di kantin pada jam istirahat pertama. Evaluasi yang paling tepat adalah …", "opts": [["A", "Survei pasti tidak bias karena responden benar-benar berada di kantin"], ["B", "Survei hanya bias jika jumlah responden kurang dari 100"], ["C", "Survei sudah representatif karena semua responden adalah siswa"], ["D", "Survei berpotensi bias karena siswa yang membawa bekal/tidak membeli tidak terwakili dan karakter pembeli dapat berbeda antarwaktu; perbaikannya adalah mengambil sampel acak dari siswa dan beberapa waktu"]], "ans": "D", "hint": "Tanyakan siapa yang tidak mendapat kesempatan menjadi responden.", "exp": "Siswa yang tidak membeli di kantin tidak terwakili, dan pembeli pada satu jam istirahat mungkin berbeda dari waktu lain. Sampel acak dari siswa dan beberapa waktu akan mengurangi bias."}, {"id": 12, "source": 13, "level": "High", "topic": "Data Berkelompok", "q": "Nilai 40 siswa dikelompokkan: 41–50:3, 51–60:7, 61–70:12, 71–80:11, 81–90:7. Kelas modal dan persentase siswa dengan nilai minimal 71 adalah …", "opts": [["A", "61–70 dan 45%"], ["B", "71–80 dan 45%"], ["C", "61–70 dan 55%"], ["D", "71–80 dan 55%"]], "ans": "A", "hint": "Kelas modal memiliki frekuensi terbesar. Untuk nilai minimal 71, jumlahkan dua interval terakhir.", "exp": "Frekuensi terbesar 12 ada pada 61–70. Nilai minimal 71 berjumlah 11+7=18 siswa, sehingga persentasenya 18/40×100%=45%."}, {"id": 13, "source": 23, "level": "High", "topic": "Skala Diagram Menyesatkan", "q": "Diagram batang membandingkan nilai 78 dan 84, tetapi sumbu vertikal dimulai dari 75. Pernyataan yang paling tepat adalah …", "opts": [["A", "Diagram selalu benar karena selisih data tetap 6"], ["B", "Diagram dapat melebih-lebihkan perbedaan; sebaiknya sumbu dimulai dari 0 atau pemotongan sumbu diberi tanda dan skala dijelaskan"], ["C", "Diagram harus dimulai dari 75 agar data lebih mudah dibaca"], ["D", "Sumbu vertikal tidak memengaruhi interpretasi pembaca"]], "ans": "B", "hint": "Perhatikan bagaimana tinggi batang terlihat jika hanya bagian 75–84 yang ditampilkan.", "exp": "Memulai sumbu dari 75 membuat selisih 6 poin terlihat jauh lebih besar secara visual. Gunakan sumbu dari 0 atau beri tanda pemotongan dan penjelasan skala yang jelas."}, {"id": 14, "source": 36, "level": "High", "topic": "Diagram Lingkaran dan Rasio", "q": "Dalam diagram lingkaran, perbandingan sektor A:B:C:D = 3:5:4:6. Jika total data 216, sudut sektor C dan frekuensi sektor B adalah …", "opts": [["A", "60° dan 72"], ["B", "80° dan 72"], ["C", "80° dan 60"], ["D", "100° dan 60"]], "ans": "C", "hint": "Jumlahkan rasio menjadi 18 bagian. Gunakan 4/18 untuk C dan 5/18 untuk B.", "exp": "Sudut C = 4/18×360°=80°. Frekuensi B = 5/18×216=60."}, {"id": 15, "source": 48, "level": "High", "topic": "Rata-rata Gabungan", "q": "Rata-rata nilai 20 siswa kelas A adalah 76, sedangkan rata-rata 30 siswa kelas B adalah 84. Rata-rata gabungan kedua kelas adalah …", "opts": [["A", "79,0"], ["B", "80,0"], ["C", "82,0"], ["D", "80,8"]], "ans": "D", "hint": "Gunakan rata-rata tertimbang berdasarkan banyak siswa di tiap kelas.", "exp": "Rata-rata gabungan = [20(76)+30(84)]/50 = (1520+2520)/50 = 4040/50 = 80,8."}, {"id": 16, "source": 17, "level": "Olympiad/Challenge", "topic": "Frekuensi Hilang", "q": "Rata-rata data pada tabel berikut adalah 7: nilai 4,6,8,10,12 dengan frekuensi 3,x,7,4,2. Nilai x adalah …", "opts": [["A", "20"], ["B", "16"], ["C", "12"], ["D", "8"]], "ans": "A", "hint": "Gunakan rata-rata = jumlah nilai tertimbang / jumlah frekuensi.", "exp": "Jumlah frekuensi = x+16 dan jumlah nilai tertimbang = 132+6x. Karena rata-rata 7, (132+6x)/(x+16)=7 sehingga x=20."}, {"id": 17, "source": 49, "level": "Olympiad/Challenge", "topic": "Rata-rata Hilang", "q": "Rata-rata 12 data adalah 18. Setelah satu data ditambahkan, rata-rata menjadi 19. Nilai data yang ditambahkan adalah …", "opts": [["A", "29"], ["B", "31"], ["C", "33"], ["D", "37"]], "ans": "B", "hint": "Bandingkan jumlah seluruh data sebelum dan sesudah penambahan satu data.", "exp": "Jumlah awal = 12×18=216. Jumlah baru = 13×19=247. Data tambahan = 247−216=31."}, {"id": 18, "source": 51, "level": "Olympiad/Challenge", "topic": "Outlier dan Ukuran Pemusatan", "q": "Data waktu pengerjaan adalah 18,20,19,21,20,22,80 menit. Ukuran yang lebih mewakili data tipikal beserta alasannya adalah …", "opts": [["A", "Mean 20, karena semua data harus dirata-ratakan"], ["B", "Mean 28,57, karena mean selalu paling representatif"], ["C", "Median 20, karena nilai 80 merupakan outlier yang menaikkan mean secara kuat"], ["D", "Median 21, karena berada di tengah data sebelum diurutkan"]], "ans": "C", "hint": "Urutkan data dan perhatikan pengaruh nilai 80 terhadap mean.", "exp": "Mean = 200/7≈28,57, sedangkan median setelah data diurutkan adalah 20. Nilai 80 merupakan outlier sehingga median 20 lebih mewakili waktu tipikal."}, {"id": 19, "source": 55, "level": "Olympiad/Challenge", "topic": "Mengevaluasi Klaim Data", "q": "Penjualan naik dari 100 menjadi 110 unit. Poster menulis 'penjualan melonjak drastis 10 kali lipat'. Evaluasi yang benar adalah …", "opts": [["A", "Benar, karena naik 10 unit berarti 10 kali lipat"], ["B", "Benar, karena 110 adalah 10 kali 11"], ["C", "Salah; kenaikannya 110%, bukan 10 kali lipat"], ["D", "Salah; kenaikan sebenarnya 10%, sedangkan 10 kali lipat dari 100 seharusnya 1.000"]], "ans": "D", "hint": "Hitung persentase kenaikan dari nilai awal 100.", "exp": "Kenaikannya 10 unit dari 100, yaitu 10%. Kenaikan menjadi 10 kali lipat berarti nilai akhirnya 1.000, bukan 110."}, {"id": 20, "source": 60, "level": "Olympiad/Challenge", "topic": "Sintesis Persentase, Rasio, dan Pie Chart", "q": "Dalam survei 400 siswa, 45% memilih olahraga. Di dalam kelompok olahraga, rasio futsal:basket:badminton = 5:3:2. Frekuensi futsal, basket, badminton dan sudut sektor futsal jika diagram lingkaran hanya dibuat untuk kelompok olahraga adalah …", "opts": [["A", "90, 54, 36 dan 180°"], ["B", "100, 50, 30 dan 200°"], ["C", "90, 60, 30 dan 162°"], ["D", "180, 108, 72 dan 180°"]], "ans": "A", "hint": "Hitung dahulu 45% dari 400, kemudian bagi menurut rasio 5:3:2.", "exp": "Kelompok olahraga = 0,45×400=180 siswa. Total rasio 10, sehingga futsal=90, basket=54, badminton=36. Sudut futsal dalam pie chart kelompok olahraga = 90/180×360°=180°."}];
+let current = 0;
+let answers = Array(QUESTIONS.length).fill(null);
+let submitted = false;
+let hintsOpen = new Set();
+let startTime = Date.now();
+
+const $ = id => document.getElementById(id);
+const navgrid = $("navgrid");
+
+QUESTIONS.forEach((q,i)=>{
+  const b=document.createElement("button");
+  b.className="qnav";
+  b.textContent=i+1;
+  b.onclick=()=>{current=i;render();};
+  navgrid.appendChild(b);
+});
+
+function render(){
+  const q=QUESTIONS[current];
+  $("levelTag").textContent=q.level;
+  $("topicTag").textContent=q.topic;
+  $("sourceTag").textContent="Worksheet 28 · Soal #" + q.source;
+  $("questionText").textContent=(current+1)+". "+q.q;
+  $("options").innerHTML="";
+
+  q.opts.forEach(([val,label])=>{
+    const d=document.createElement("div");
+    d.className="option";
+    if(answers[current]===val) d.classList.add("selected");
+    if(submitted){
+      if(val===q.ans) d.classList.add("correct");
+      if(answers[current]===val && val!==q.ans) d.classList.add("wrong");
+    }
+    d.innerHTML=`<span class="letter">${val}</span><span>${label}</span>`;
+    d.onclick=()=>{
+      if(submitted) return;
+      answers[current]=val;
+      render();
+      saveState();
+    };
+    $("options").appendChild(d);
+  });
+
+  const hint=$("hintbox");
+  hint.textContent="Clue: "+q.hint;
+  hint.style.display=hintsOpen.has(current)?"block":"none";
+  $("hintBtn").textContent=hintsOpen.has(current)?"💡 Sembunyikan Clue":"💡 Lihat Clue";
+
+  const fb=$("feedback");
+  if(submitted){
+    const ok=answers[current]===q.ans;
+    fb.className="feedback "+(ok?"ok":"no");
+    fb.style.display="block";
+    fb.innerHTML=`<strong>${ok?"Jawaban benar":"Jawaban belum tepat"}.</strong> ${q.exp}`;
+  } else {
+    fb.style.display="none";
+  }
+
+  $("prevBtn").disabled=current===0;
+  $("nextBtn").disabled=current===QUESTIONS.length-1;
+  updateNav();
+}
+
+function updateNav(){
+  const buttons=[...document.querySelectorAll(".qnav")];
+  buttons.forEach((b,i)=>{
+    b.className="qnav";
+    if(i===current) b.classList.add("current");
+    if(answers[i]!==null) b.classList.add("answered");
+    if(submitted && answers[i]!==null){
+      b.classList.remove("answered");
+      b.classList.add(answers[i]===QUESTIONS[i].ans?"correct":"wrong");
+    }
+  });
+  const count=answers.filter(Boolean).length;
+  $("answeredPill").textContent=`Terjawab ${count}/${QUESTIONS.length}`;
+  $("progress").style.width=(count/QUESTIONS.length*100)+"%";
+}
+
+$("prevBtn").onclick=()=>{if(current>0){current--;render();}};
+$("nextBtn").onclick=()=>{if(current<QUESTIONS.length-1){current++;render();}};
+$("hintBtn").onclick=()=>{
+  if(hintsOpen.has(current)) hintsOpen.delete(current);
+  else hintsOpen.add(current);
+  render();
+};
+
+$("finishBtn").onclick=()=>{
+  const unanswered=answers.filter(x=>x===null).length;
+  if(unanswered>0){
+    const ok=confirm(`Masih ada ${unanswered} soal belum dijawab. Tetap selesaikan CBT?`);
+    if(!ok) return;
+  }
+
+  submitted=true;
+  const correct=QUESTIONS.reduce((n,q,i)=>n+(answers[i]===q.ans?1:0),0);
+  const pct=Math.round(correct/QUESTIONS.length*100);
+  const student=$("studentName").value.trim() || "Student";
+
+  $("scoreText").textContent=pct;
+  $("scoreRing").style.background=`conic-gradient(var(--purple) ${pct*3.6}deg,#ece5ef 0deg)`;
+  $("resultTitle").textContent=`Hasil ${student}`;
+  $("resultDesc").innerHTML=`Benar <strong>${correct} dari ${QUESTIONS.length}</strong> soal · Skor <strong>${pct}/100</strong>.<br>${pct>=85?"Penguasaan sangat baik.":pct>=70?"Penguasaan baik. Lanjutkan review pada soal yang keliru.":pct>=55?"Pemahaman dasar sudah terlihat, tetapi interpretasi dan analisis data masih perlu diperkuat.":"Perlu review bertahap pada frekuensi, diagram, persentase, rata-rata, dan penalaran statistik sebelum mengulang CBT."}`;
+  $("overlay").style.display="grid";
+  render();
+  saveState();
+};
+
+$("closeResult").onclick=()=>{$("overlay").style.display="none";};
+
+$("resetBtn").onclick=()=>{
+  if(!confirm("Ulangi CBT dari awal? Semua jawaban akan dihapus.")) return;
+  answers=Array(QUESTIONS.length).fill(null);
+  submitted=false;
+  current=0;
+  hintsOpen.clear();
+  startTime=Date.now();
+  localStorage.removeItem("algonova_cbt_data_diagram_colin_20");
+  $("studentName").value="Colin";
+  $("overlay").style.display="none";
+  render();
+};
+
+function saveState(){
+  try{
+    localStorage.setItem("algonova_cbt_data_diagram_colin_20",JSON.stringify({
+      answers,
+      current,
+      studentName:$("studentName").value,
+      startTime,
+      submitted
+    }));
+  }catch(e){}
+}
+
+function loadState(){
+  try{
+    const s=JSON.parse(localStorage.getItem("algonova_cbt_data_diagram_colin_20")||"null");
+    if(s && Array.isArray(s.answers) && s.answers.length===QUESTIONS.length){
+      answers=s.answers;
+      current=s.current||0;
+      startTime=s.startTime||Date.now();
+      submitted=!!s.submitted;
+      $("studentName").value=s.studentName||"Colin";
+    }
+  }catch(e){}
+}
+
+$("studentName").addEventListener("input",saveState);
+
+setInterval(()=>{
+  const sec=Math.floor((Date.now()-startTime)/1000);
+  const h=String(Math.floor(sec/3600)).padStart(2,"0");
+  const m=String(Math.floor((sec%3600)/60)).padStart(2,"0");
+  const s=String(sec%60).padStart(2,"0");
+  $("timer").textContent=`Waktu ${h}:${m}:${s}`;
+},1000);
+
+loadState();
+render();
+</script>
+</body>
+</html>
